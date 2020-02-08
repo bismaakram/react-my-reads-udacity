@@ -1,6 +1,11 @@
 import React from "react";
+import nocover from "../images/nocover.gif";
 
 const Book = props => {
+  const coverImg =
+    props.book.imageLinks && props.book.imageLinks.thumbnail
+      ? props.book.imageLinks.thumbnail
+      : nocover;
   return (
     <li>
       <div className="book">
@@ -10,7 +15,8 @@ const Book = props => {
             style={{
               width: 128,
               height: 193,
-              backgroundImage: `url(${props.book.imageLinks.thumbnail})`
+
+              backgroundImage: `url(${coverImg})`
             }}
           ></div>
           <div className="book-shelf-changer">

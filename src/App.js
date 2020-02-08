@@ -1,7 +1,11 @@
 import React from "react";
 // import * as BooksAPI from './BooksAPI'
 import "./App.css";
-import BookList from "./components/BooksList";
+import BooksList from "./components/BooksList";
+import Search from "./components/Search";
+import Searchbar from "./components/Searchbar";
+import axios from "axios";
+import { headers } from "./BooksAPI";
 
 class BooksApp extends React.Component {
   state = {
@@ -11,9 +15,80 @@ class BooksApp extends React.Component {
      * users can use the browser's back and forward buttons to navigate between
      * pages, as well as provide a good URL they can bookmark and share.
      */
-    showSearchPage: false
+    showSearchPage: false,
+    query: "",
+    newbooks: [],
+    searchErr: false,
+    books: []
+  };
+  componentDidMount() {
+    this.fetchBooks();
+  }
+
+  fetchBooks = () => {
+    axios
+      .get("https://reactnd-books-api.udacity.com/books/", { headers })
+      .then(res => {
+        this.setState({
+          books: res.data.books
+        });
+      });
   };
 
+  onChange = e => {
+    this.setState({
+      query: e.target.value
+    });
+    if (this.state.query !== "") {
+      let data = JSON.stringify({ query: this.state.query });
+
+      axios
+        .post(
+          "https://reactnd-books-api.udacity.com/search/",
+          data,
+
+          {
+            headers: {
+              ...headers,
+              "Content-Type": "application/json"
+            }
+          }
+        )
+        .then(res => {
+          if (res.data.books.length > 0) {
+            this.setState({
+              newbooks: res.data.books,
+              searchErr: false
+            });
+          } else {
+            this.setState({
+              newbooks: [],
+              searchErr: true
+            });
+          }
+        });
+    } else {
+      this.setState({
+        newbooks: [],
+        searchErr: false
+      });
+    }
+  };
+
+  handleChange = (event, title) => {
+    event.preventDefault();
+    var newbooks = [...this.state.newbooks];
+
+    var title = title;
+    var findindex = newbooks.findIndex(book => book.title === title);
+
+    newbooks[findindex].shelf = event.target.value;
+
+    this.setState({
+      ...this.state,
+      books: [...this.state.books, this.state.newbooks[findindex]]
+    });
+  };
   render() {
     return (
       <div className="app">
@@ -26,21 +101,14 @@ class BooksApp extends React.Component {
               >
                 woop
               </button>
-              <div className="search-books-input-wrapper">
-                {/*
-                  NOTES: The search from BooksAPI is limited to a particular set of search terms.
-                  You can find these search terms here:
-                  https://github.com/udacity/reactnd-project-myreads-starter/blob/master/SEARCH_TERMS.md
-
-                  However, remember that the BooksAPI.search method DOES search by title or author. So, don't worry if
-                  you don't find a specific author or title. Every search is limited by search terms.
-                */}
-                <input type="text" placeholder="Search by title or author" />
-              </div>
+              <Searchbar onChange={this.onChange}></Searchbar>
             </div>
-            <div className="search-books-results">
-              <ol className="books-grid"></ol>
-            </div>
+            <Search
+              books={this.state.newbooks}
+              handleChange={this.handleChange}
+              onChange={this.onChange}
+              searchErr={this.state.searchErr}
+            ></Search>
           </div>
         ) : (
           <div>
@@ -48,9 +116,17 @@ class BooksApp extends React.Component {
               <div className="list-books-title">
                 <h1>MyReads</h1>
               </div>
-              <BookList></BookList>
+              <BooksList books={this.state.books}></BooksList>
               <div className="open-search">
-                <button onClick={() => this.setState({ showSearchPage: true })}>
+                <button
+                  onClick={() =>
+                    this.setState({
+                      showSearchPage: true,
+                      searchErr: false,
+                      newbooks: []
+                    })
+                  }
+                >
                   Add a book
                 </button>
               </div>

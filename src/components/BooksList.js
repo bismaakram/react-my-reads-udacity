@@ -4,35 +4,18 @@ import axios from "axios";
 import Book from "./Book";
 
 export default class BooksList extends Component {
-  state = {
-    books: []
-  };
-
-  componentDidMount() {
-    this.fetchBooks();
-  }
-
   handleChange = (event, title) => {
     event.preventDefault();
-    var books = [...this.state.books];
+    var books = [...this.props.books];
 
     var title = title;
     var findindex = books.findIndex(book => book.title === title);
 
     books[findindex].shelf = event.target.value;
+
     this.setState({
       books
     });
-  };
-
-  fetchBooks = () => {
-    axios
-      .get("https://reactnd-books-api.udacity.com/books/", { headers })
-      .then(res => {
-        this.setState({
-          books: res.data.books
-        });
-      });
   };
 
   render() {
@@ -43,7 +26,7 @@ export default class BooksList extends Component {
             <h2 className="bookshelf-title">Currently Reading</h2>
             <div className="bookshelf-books">
               <ol className="books-grid">
-                {this.state.books.map(book => {
+                {this.props.books.map(book => {
                   if (book.shelf === "currentlyReading")
                     return (
                       <Fragment>
@@ -61,7 +44,7 @@ export default class BooksList extends Component {
             <h2 className="bookshelf-title">Read</h2>
             <div className="bookshelf-books">
               <ol className="books-grid">
-                {this.state.books.map(book => {
+                {this.props.books.map(book => {
                   if (book.shelf === "read")
                     return (
                       <Fragment>
@@ -79,7 +62,7 @@ export default class BooksList extends Component {
             <h2 className="bookshelf-title">Want to Read</h2>
             <div className="bookshelf-books">
               <ol className="books-grid">
-                {this.state.books.map(book => {
+                {this.props.books.map(book => {
                   if (book.shelf === "wantToRead")
                     return (
                       <Fragment>
