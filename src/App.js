@@ -77,17 +77,27 @@ class BooksApp extends React.Component {
 
   handleChange = (event, title) => {
     event.preventDefault();
+
     var newbooks = [...this.state.newbooks];
 
     var title = title;
     var findindex = newbooks.findIndex(book => book.title === title);
 
     newbooks[findindex].shelf = event.target.value;
+    var check = this.state.books.some(book => book.title === title);
+    if (check === false) {
+      this.setState({
+        ...this.state,
+        books: [...this.state.books, this.state.newbooks[findindex]]
+      });
+    } else {
+      var findindex = this.state.books.findIndex(book => book.title === title);
 
-    this.setState({
-      ...this.state,
-      books: [...this.state.books, this.state.newbooks[findindex]]
-    });
+      this.state.books[findindex].shelf = event.target.value;
+      this.setState({
+        books: this.state.books
+      });
+    }
   };
   render() {
     return (
