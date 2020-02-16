@@ -4,20 +4,6 @@ import axios from "axios";
 import Book from "./Book";
 
 export default class BooksList extends Component {
-  handleChange = (event, title) => {
-    event.preventDefault();
-    var books = [...this.props.books];
-
-    var title = title;
-    var findindex = books.findIndex(book => book.title === title);
-
-    books[findindex].shelf = event.target.value;
-
-    this.setState({
-      books
-    });
-  };
-
   render() {
     return (
       <div className="list-books-content">
@@ -32,7 +18,7 @@ export default class BooksList extends Component {
                       <Fragment>
                         <Book
                           book={book}
-                          handleChange={this.handleChange}
+                          handleChange={this.props.handleChange}
                         ></Book>
                       </Fragment>
                     );
@@ -50,7 +36,7 @@ export default class BooksList extends Component {
                       <Fragment>
                         <Book
                           book={book}
-                          handleChange={this.handleChange}
+                          handleChange={this.props.handleChange}
                         ></Book>
                       </Fragment>
                     );
@@ -68,7 +54,7 @@ export default class BooksList extends Component {
                       <Fragment>
                         <Book
                           book={book}
-                          handleChange={this.handleChange}
+                          handleChange={this.props.handleChange}
                         ></Book>
                       </Fragment>
                     );

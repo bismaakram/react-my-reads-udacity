@@ -20,7 +20,11 @@ const Book = props => {
             }}
           ></div>
           <div className="book-shelf-changer">
-            <select onChange={e => props.handleChange(e, props.book.title)}>
+            <select
+              onChange={e =>
+                props.handleChange(e, props.book.title, props.book)
+              }
+            >
               <option value="DEFAULT">Move to...</option>
 
               <option value="currentlyReading">Currently Reading</option>

@@ -75,29 +75,36 @@ class BooksApp extends React.Component {
     }
   };
 
-  handleChange = (event, title) => {
+  handleChange = (event, title, book) => {
     event.preventDefault();
+    if (this.state.newbooks.includes(book)) {
+      var newbooks = [...this.state.newbooks];
 
-    var newbooks = [...this.state.newbooks];
+      var title = title;
+      var findindex = newbooks.findIndex(book => book.title === title);
 
-    var title = title;
-    var findindex = newbooks.findIndex(book => book.title === title);
-
-    newbooks[findindex].shelf = event.target.value;
-    var check = this.state.books.some(book => book.title === title);
-    if (check === false) {
-      this.setState({
-        ...this.state,
-        books: [...this.state.books, this.state.newbooks[findindex]]
-      });
+      newbooks[findindex].shelf = event.target.value;
+      var check = this.state.books.some(book => book.title === title);
+      if (check === false) {
+        this.setState({
+          ...this.state,
+          books: [...this.state.books, this.state.newbooks[findindex]]
+        });
+      } else {
+        this.inBookList(event, title);
+      }
     } else {
-      var findindex = this.state.books.findIndex(book => book.title === title);
-
-      this.state.books[findindex].shelf = event.target.value;
-      this.setState({
-        books: this.state.books
-      });
+      this.inBookList(event, title);
     }
+  };
+
+  inBookList = (event, title) => {
+    var findindex = this.state.books.findIndex(book => book.title === title);
+
+    this.state.books[findindex].shelf = event.target.value;
+    this.setState({
+      books: this.state.books
+    });
   };
   render() {
     return (
@@ -126,7 +133,10 @@ class BooksApp extends React.Component {
               <div className="list-books-title">
                 <h1>MyReads</h1>
               </div>
-              <BooksList books={this.state.books}></BooksList>
+              <BooksList
+                books={this.state.books}
+                handleChange={this.handleChange}
+              ></BooksList>
               <div className="open-search">
                 <button
                   onClick={() =>
